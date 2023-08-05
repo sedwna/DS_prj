@@ -1,9 +1,7 @@
 
-// slm
-// hellow
+#include "../include/app.hpp"
 
-#include <iostream>
-using namespace std;
+
 
 int main()
 {
