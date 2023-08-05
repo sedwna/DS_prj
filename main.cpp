@@ -1,5 +1,12 @@
-<<<<<<< HEAD
+
 // slm
-=======
-//hellow
->>>>>>> f766782b7a459d2487622299f6a7b30222597f32
+// hellow
+
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    cout << "slm";
+    return 0;
+}
