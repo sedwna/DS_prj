@@ -1,19 +1,17 @@
 #pragma once
 #include <vector>
 #include <iostream>
-//#include <string>
+#include <string>
+#include "unordered_map"
+
 using namespace std;
 
-class city
+class City
 {
 
 public:
-    
-    string province_name
-    string city_name
+    string province_name;
+    string city_name;
     string type;
     int id;
-    
-
-
 };

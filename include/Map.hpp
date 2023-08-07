@@ -1,6 +1,5 @@
-#pragma once
 #include "Province.hpp"
-class map
+class Map
 {
 
 public:
