@@ -11,7 +11,7 @@ void App::splashScreen() const
 
     cout << "   |=|===================|=|      \n";
     cout << "   |=|                   |=|      \n";
-    cout << "   |=|   Hungry Snake    |=|      \n";
+    cout << "   |=|       Sapp        |=|      \n";
     cout << "   |                       |      \n";
     cout << "   |=======================|      \n";
     cout << "   |=======================|      \n";
