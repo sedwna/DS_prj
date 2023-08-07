@@ -1,9 +1,11 @@
 #include "../include/app.hpp"
 
+// tuple<string, >
 // -------------------------------------------------------
 App::App()
 {
-    splashScreen();
+    // splashScreen();
+    createMap();
 }
 // -------------------------------------------------------
 void App::splashScreen() const
@@ -17,8 +19,15 @@ void App::splashScreen() const
     cout << "   |=======================|      \n";
 
     cout << endl;
+
+    cout << "[<!>] "
+         << "Enter <create> command to create map\n"
+         << endl;
     cout << "[<!>] "
          << "Enter <help> command to guide you\n"
          << endl;
 }
 // -------------------------------------------------------
+void App::createMap(){
+    
+}

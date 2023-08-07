@@ -9,4 +9,5 @@ public:
     App();
 
     void splashScreen() const;
+    void createMap();
 };
