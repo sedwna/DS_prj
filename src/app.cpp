@@ -104,16 +104,21 @@ tuple<int, string, string, string> App::parse_instruction(string create, int num
     getline(check1, intermediate, ':');  // get province name
     tokens.push_back(intermediate);      // get province name
 
-    for (int i = 0; i < tokens.size(); i++) // check parse is correct
+    for (int i = 0; i < tokens.size(); i++)
+    {
         cout << tokens[i] << '\n';
+    } // check parse is correct
+    // myMap.province[0].city[0].city_name = "Qom";
+    // return make_tuple();
+    // show_info();
+}
 
-    map.province[number_province].city[number_city].city_name = tokens[0];
-    map.province[number_province].city[number_city].id = stoi(tokens[1]);
-    map.province[number_province].city[number_city].type = tokens[2];
-    map.province[number_province].city[number_city].province_name = tokens[3];
+void App ::show_info()
+{
 
-    cout << map.province[number_province].city[number_city].city_name << endl;
-    cout << map.province[number_province].city[number_city].id << endl;
-    cout << map.province[number_province].city[number_city].type << endl;
-    cout << map.province[number_province].city[number_city].province_name << endl;
+    cout << "slmm" << endl;
+    cout << myMap.province[0].city[0].city_name << endl;
+    cout << myMap.province[0].city[0].id << endl;
+    cout << myMap.province[0].city[0].type << endl;
+    cout << myMap.province[0].city[0].province_name << endl;
 }

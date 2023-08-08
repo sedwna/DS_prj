@@ -6,6 +6,6 @@ class Province
 
 public:
     vector<City> city;
-    vector<vector<int>> cost_city();
+    // vector<vector<int>> cost_city();
 
 };

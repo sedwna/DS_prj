@@ -4,5 +4,5 @@ class Map
 
 public:
     vector<Province> province;
-    vector<vector<int>> cost_province();
+    // vector<vector<int>> cost_province();
 };
