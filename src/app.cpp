@@ -58,13 +58,35 @@ void App::createMap()
                 greaterThan4 = true;
             }
         }
-        string name;
         for (size_t j = 0; j < number_city; j++)
         {
-            
+
+            map.province[i].city[j].id;
+            map.province[i].city[j].city_name;
+            map.province[i].city[j].province_name;
+            map.province[i].city[j].type;
+
             cout << "CREATE (";
-            cin >> name;
         }
         
     }
+}
+
+tuple<int, string, string, string> App::parse_instruction(string create)
+{
+    for (size_t i = 0; i < 4; i++)
+    {
+        bool check = true;
+        int j = 0;
+        while (check)
+        {
+            if (create[j] == '\'')
+            {
+                
+            }
+            
+        }
+        //return make_tuple(id, Province, rt, func);
+    }
+    
 }
