@@ -1,0 +1,1 @@
+CREATE (A: Node, {id: '1', Type: 'BG'}, name: province)

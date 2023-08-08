@@ -40,53 +40,80 @@ void App::createMap()
     {
         cout << "!!!your number should be greater than 2 -->  ";
         cin >> number_province;
-        if (number_province >= 3)
+        if (number_province > 2)
         {
             greaterThan2 = true;
         }
     }
 
-    for (size_t i = 0; i < number_province; i++)
+    for (int i_p = 0; i_p < number_province; i_p++)
     {
-        
+
         while (!greaterThan4)
         {
             cout << "!!!your number should be greater than 4 -->  ";
             cin >> number_city;
-            if (number_province >= 5)
+            if (number_city > 4)
             {
                 greaterThan4 = true;
             }
         }
-        for (size_t j = 0; j < number_city; j++)
+        for (int i_c = 0; i_c < number_city; i_c++)
         {
+            string file_path = "input//input.txt"; // get input from file
+            ifstream input_file(file_path);
 
-            map.province[i].city[j].id;
-            map.province[i].city[j].city_name;
-            map.province[i].city[j].province_name;
-            map.province[i].city[j].type;
+            if (!input_file.is_open())
+            {
+                cerr << "Error opening the file: " << file_path << endl;
+            }
 
-            cout << "CREATE (";
+            string line;
+            while (getline(input_file, line))
+            {
+                // cout << line << endl;
+                cout << i_c << " " << i_p << endl;
+                parse_instruction(line, i_p, i_c);
+            }
+
+            input_file.close(); // close file
         }
-        
     }
 }
 
-tuple<int, string, string, string> App::parse_instruction(string create)
+tuple<int, string, string, string> App::parse_instruction(string create, int number_province, int number_city)
 {
-    for (size_t i = 0; i < 4; i++)
-    {
-        bool check = true;
-        int j = 0;
-        while (check)
-        {
-            if (create[j] == '\'')
-            {
-                
-            }
-            
-        }
-        //return make_tuple(id, Province, rt, func);
-    }
-    
+
+    vector<string> tokens;
+
+    stringstream check1(create);
+
+    string intermediate;
+
+    // Tokenizing input
+    getline(check1, intermediate, '(');  // delete useless info
+    getline(check1, intermediate, ':');  // get city name
+    tokens.push_back(intermediate);      // push city name
+    getline(check1, intermediate, '\''); // delete useless info
+    getline(check1, intermediate, '\''); // get id
+    tokens.push_back(intermediate);      // push id
+    getline(check1, intermediate, '\''); // delete useless info
+    getline(check1, intermediate, '\''); // get BG or  NBG
+    tokens.push_back(intermediate);      // //p[ush BG or NBG]
+    getline(check1, intermediate, ' ');  // delete useless info
+    getline(check1, intermediate, ':');  // get province name
+    tokens.push_back(intermediate);      // get province name
+
+    for (int i = 0; i < tokens.size(); i++) // check parse is correct
+        cout << tokens[i] << '\n';
+
+    map.province[number_province].city[number_city].city_name = tokens[0];
+    map.province[number_province].city[number_city].id = stoi(tokens[1]);
+    map.province[number_province].city[number_city].type = tokens[2];
+    map.province[number_province].city[number_city].province_name = tokens[3];
+
+    cout << map.province[number_province].city[number_city].city_name << endl;
+    cout << map.province[number_province].city[number_city].id << endl;
+    cout << map.province[number_province].city[number_city].type << endl;
+    cout << map.province[number_province].city[number_city].province_name << endl;
 }
