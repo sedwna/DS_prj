@@ -15,5 +15,7 @@ public:
     string province_name;
     string city_name;
     string type;
+
+
     int id;
 };
