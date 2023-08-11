@@ -6,6 +6,17 @@ void Map::createMap()
     bool greaterThan2 = false;
     bool greaterThan4 = false;
     int bg_count = 0;
+    // set 0 in the local matrix
+    for (size_t i = 0; i < number_province; i++)
+    {
+        for (size_t j = 0; j < SIZE_OF_CITY; j++)
+        {
+            for (size_t k = 0; k < SIZE_OF_CITY; k++)
+            {
+                province[i].set_local_matrix(j, k, 0);
+            }
+        }
+    }
 
     while (!greaterThan2)
     {
@@ -18,7 +29,7 @@ void Map::createMap()
         }
     }
 
-    for (int i_p = 1; i_p <= number_province; i_p++)
+    for (int i_p = 0; i_p < number_province; i_p++)
     {
 
         while (!greaterThan4)
@@ -45,17 +56,29 @@ void Map::createMap()
             province[i_p].city[i_c].id = get<1>(instruction);
             province[i_p].city[i_c].type = get<2>(instruction);
             province[i_p].city[i_c].province_name = get<3>(instruction);
-            cout << province[i_p].city[i_c].city_name << endl;
-            cout << province[i_p].city[i_c].id << endl;
-            cout << province[i_p].city[i_c].type << endl;
-            cout << province[i_p].city[i_c].province_name << endl;
+            // cout << province[i_p].city[i_c].city_name << endl;
+            // cout << province[i_p].city[i_c].id << endl;
+            // cout << province[i_p].city[i_c].type << endl;
+            // cout << province[i_p].city[i_c].province_name << endl;
 
             if (get<2>(instruction) == "BG")
             {
                 set_bg_count();
             }
+            // set id in local matrix
+            province[i_p].set_local_matrix(0, i_c + 1, province[i_p].city[i_c].id);
+            province[i_p].set_local_matrix(i_c + 1, 0, province[i_p].city[i_c].id);
         }
         greaterThan4 = false;
+    }
+    for (size_t i = 0; i < number_province; i++)
+    {
+        cout << endl
+             << " show local matrix " << endl;
+
+        province[i].get_local_matrix();
+
+        cout << endl;
     }
 }
 
@@ -115,7 +138,6 @@ tuple<string, string, int, string, string> Map::parse_CreateRoad_instruction(str
     end_city = intermediate;            // push end_city name
     getline(check1, intermediate, ')'); // get end_province name
     end_province = intermediate;        // push end_province name
-    cout << end_city << "\t" << end_province;
     return make_tuple(start_city, start_province, cost, end_city, end_province);
 }
 
@@ -126,6 +148,7 @@ void Map::createRoad()
     int city_id_start;
     int city_id_end;
     int **foreign_matrix;
+
     foreign_matrix = create_foreign_matrix();
     // ------------------------------------
 
@@ -133,58 +156,84 @@ void Map::createRoad()
     getline(cin, line);
     while (line != "-1")
     {
+
         auto instruction = parse_CreateRoad_instruction(line);
         city_id_start = found_city_id(get<1>(instruction), get<0>(instruction));
         city_id_end = found_city_id(get<4>(instruction), get<3>(instruction));
-        cout << "city_id_end  " << city_id_end <<endl;
-        cout << "city_id_start  " << city_id_start <<endl;
+        // cout << "city_id_end  " << city_id_end << endl;
+        // cout << "city_id_start  " << city_id_start << endl;
+        if (get<1>(instruction) != get<4>(instruction))
+        {
+            int temp1 = 0;
+            int temp2 = 0;
+            for (int j = 0; j < bg_count; j++)
+            {
+                if (foreign_matrix[0][j + 1] == city_id_start)
+                {
+                    temp1 = j + 1;
+                    break;
+                }
+            }
+            for (int j = 0; j < bg_count; j++)
+            {
+                if (foreign_matrix[j + 1][0] == city_id_end)
+                {
+                    temp2 = j + 1;
+                    break;
+                }
+            }
+            foreign_matrix[temp2][temp1] = get<2>(instruction);
+        }
+        else if (get<1>(instruction) == get<4>(instruction))
+        {
+            for (size_t i = 0; i < number_province; i++)
+            {
 
-        // for (int j = 1; j < bg_count; j++)
-        // {
-        //     if (foreign_matrix[0][j] == city_id_start)
-        //     {
-        //         for (int k = 1; k < bg_count; k++)
-        //         {
-        //             if (foreign_matrix[k][0] == city_id_end)
-        //             {
-        //                 foreign_matrix[k][j] = get<2>(instruction);
-        //             }
-        //         }
-        //     }
-        // }
-        int temp1 = 0;
-        int temp2 = 0;
-        for (int j = 0; j < bg_count; j++)
-        {
-            if (foreign_matrix[0][j + 1] == city_id_start)
-            {
-                temp1 = j + 1;
-                break;
-            }
-           
-        }
-        for (int j = 0; j< bg_count; j++)
-        {
-            if (foreign_matrix[j + 1][0] == city_id_end)
-            {
-                temp2 = j + 1;
-                break;
+                if (province[i].city[0].province_name == get<1>(instruction))
+                {
+                    int temp1 = 0;
+                    int temp2 = 0;
+                    for (int j = 0; j < SIZE_OF_CITY; j++)
+                    {
+                        if (province[i].local_matrix[0][j + 1] == city_id_start)
+                        {
+                            temp1 = j + 1;
+                            break;
+                        }
+                    }
+                    for (int j = 0; j < SIZE_OF_CITY; j++)
+                    {
+                        if (province[i].local_matrix[j + 1][0] == city_id_end)
+                        {
+                            temp2 = j + 1;
+                            break;
+                        }
+                    }
+                    province[i].local_matrix[temp2][temp1] = get<2>(instruction);
+                }
             }
         }
-        foreign_matrix[temp2][temp1] = get<2>(instruction);
-        
 
         cout << "enter cost of your road --> ";
         getline(cin, line);
     }
 
     show_foreign_matrix(foreign_matrix);
+    for (size_t i = 0; i < number_province; i++)
+    {
+        cout << endl
+             << " show local matrix " << endl;
+
+        province[i].get_local_matrix();
+
+        cout << endl;
+    }
 }
 
 int Map::found_city_id(string Province_, string City_)
 {
 
-    for (size_t i = 1; i <= number_province; i++)
+    for (size_t i = 0; i < number_province; i++)
     {
         for (size_t j = 0; j < number_city[i]; j++)
         {
@@ -215,7 +264,7 @@ int **Map::create_foreign_matrix()
             foreign_matrix[i][j] = 0;
         }
     }
-    show_foreign_matrix(foreign_matrix);
+    // show_foreign_matrix(foreign_matrix);
 
     int temp[bg_count];
 
@@ -223,14 +272,14 @@ int **Map::create_foreign_matrix()
     {
         temp[i] = -1;
     }
-    cout << "bg count :" << bg_count << endl;
-    cout << "number_province " << number_province << endl;
-    cout << "number_city 0, " << number_city[0] << endl;
-    cout << "number_city 1, " << number_city[1] << endl;
-    cout << "number_city 2, " << number_city[2] << endl;
-    cout << "number_city 3, " << number_city[3] << endl;
+    // cout << "bg count :" << bg_count << endl;
+    // cout << "number_province " << number_province << endl;
+    // cout << "number_city 0, " << number_city[0] << endl;
+    // cout << "number_city 1, " << number_city[1] << endl;
+    // cout << "number_city 2, " << number_city[2] << endl;
+    // cout << "number_city 3, " << number_city[3] << endl;
 
-    for (int i = 1; i <= number_province; i++)
+    for (int i = 0; i < number_province; i++)
     {
 
         for (int j = 0; j < number_city[i]; j++)
@@ -272,6 +321,8 @@ int **Map::create_foreign_matrix()
 }
 const void Map::show_foreign_matrix(int **foreign_matrix)
 {
+    cout << endl
+         << "show foreign matrix" << endl;
 
     for (int i = 0; i < bg_count + 1; ++i)
     {

@@ -1,12 +1,14 @@
 #include "City.hpp"
 #define SIZE_OF_PROVINCE 10
+#define SIZE_OF_CITY 10
 
 class Province
 {
 
 public:
-    City city[SIZE_OF_PROVINCE];
-    vector<vector<int>> cost_city();
-    void create_local_matrix(int count_of_city);
 
+    City city[SIZE_OF_PROVINCE];
+    void set_local_matrix(int i, int j, int value);
+    int local_matrix[SIZE_OF_CITY][SIZE_OF_CITY];
+    void get_local_matrix();
 };

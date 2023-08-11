@@ -6,7 +6,6 @@ App::App()
 {
     // splashScreen();
     myMap.createMap();
-    cout<<"1"<<endl;
     myMap.createRoad();
 }
 // -------------------------------------------------------
