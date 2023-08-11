@@ -20,4 +20,5 @@ CREATE (M: Node, {id: '13', Type: 'BG'}, Tabriz: province)
 CREATE (N: Node, {id: '14', Type: 'BG'}, Tabriz: province)
 CREATE (O: Node, {id: '15', Type: 'NON_BG'}, Tabriz: province)
 
-CREATE (A.Qom) – [:ROAD {cost:50}] –> (K.Tabriz)
+CREATE (B.Qom) – [:ROAD {cost:50}] –> (N.Tabriz)
+CREATE (E.Qom) – [:ROAD {cost:50}] –> (N.Tabriz) 
