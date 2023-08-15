@@ -1,4 +1,5 @@
 #include "../include/Province.hpp"
+const int INF = numeric_limits<int>::max();
 
 void Province::set_local_matrix(int i, int j, int value)
 {
@@ -12,7 +13,8 @@ void Province::get_local_matrix()
     {
         for (int j = 0; j < SIZE_OF_CITY; j++)
         {
-            cout << local_matrix[i][j] << " ";
+
+            cout << local_matrix[i][j] << "  ";
         }
         cout << endl;
     }

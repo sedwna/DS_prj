@@ -1,4 +1,5 @@
 #include "Province.hpp"
+#include "GPS.hpp"
 
 class Map
 {
@@ -8,6 +9,7 @@ private:
     int bg_count = 0;
 
 public:
+    GPS gps;// شی از GPS
     Province province[SIZE_OF_PROVINCE];
     tuple<string, int, string, string> parse_CreateMap_instruction(string creat);
     tuple<string, string, int, string, string> parse_CreateRoad_instruction(string creat);

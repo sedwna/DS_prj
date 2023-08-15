@@ -1,4 +1,5 @@
 #include "../include/Map.hpp"
+const int INF = numeric_limits<int>::max();
 
 void Map::createMap()
 {
@@ -210,6 +211,7 @@ void Map::createRoad()
                         }
                     }
                     province[i].local_matrix[temp2][temp1] = get<2>(instruction);
+                    province[i].local_matrix[temp1][temp2] = get<2>(instruction);
                 }
             }
         }
@@ -218,7 +220,29 @@ void Map::createRoad()
         getline(cin, line);
     }
 
+    for (int i = 0; i < number_province; i++)//توی این قسمت استان آی اُم رو  به حلقه بعد می فرستیم 
+    {
+        for (int j = 1; j <= number_city[i]; j++)// داخل این حلقه ماتریس داخلی استان مورد نظر و تعداد شهر ان به همراه سطر جی اُم  ماتریس رو میفرستیم به تابع دایجسترا تا کمترین کاست را درون ارایه دیستینسز بریزد
+        {
+            int distances[number_city[i]];
+            gps.Dijkstra(province[i].local_matrix, number_city[i], j, distances);
+
+            for (int k = 1; k <= number_city[i]; k++)// در این جا هم با ریختن مقادیر درون دیستینسز درون سطر متناظر با ان کاست ها را اپدیت می کنیم
+            {
+                if (distances[k] == INF)
+                {
+                    province[i].local_matrix[j][k] = 0;
+                }
+                else
+                {
+                    province[i].local_matrix[j][k] = distances[k];
+                }
+            }
+        }
+    }
+
     show_foreign_matrix(foreign_matrix);
+    
     for (size_t i = 0; i < number_province; i++)
     {
         cout << endl
