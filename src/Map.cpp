@@ -56,7 +56,6 @@ void Map::createMap()
         }
         greaterThan4 = false;
     }
-    show_local_matrix();
 }
 // ------------------------------------------------------------------------------------------------------
 void Map::createRoad()
@@ -77,71 +76,25 @@ void Map::createRoad()
         auto instruction = parse_CreateRoad_instruction(line);
         city_id_start = found_city_id(get<1>(instruction), get<0>(instruction));
         city_id_end = found_city_id(get<4>(instruction), get<3>(instruction));
-        // cout << "city_id_end  " << city_id_end << endl;
-        // cout << "city_id_start  " << city_id_start << endl;
-        if (get<1>(instruction) != get<4>(instruction))
-        {
-            int temp1 = 0;
-            int temp2 = 0;
-            for (int j = 0; j < bg_count; j++)
-            {
-                if (foreign_matrix[0][j + 1] == city_id_start)
-                {
-                    temp1 = j + 1;
-                    break;
-                }
-            }
-            for (int j = 0; j < bg_count; j++)
-            {
-                if (foreign_matrix[j + 1][0] == city_id_end)
-                {
-                    temp2 = j + 1;
-                    break;
-                }
-            }
-            foreign_matrix[temp2][temp1] = get<2>(instruction);
-        }
-        else if (get<1>(instruction) == get<4>(instruction))
-        {
-            for (size_t i = 0; i < number_province; i++)
-            {
 
-                if (province[i].city[0].province_name == get<1>(instruction))
-                {
-                    int temp1 = 0;
-                    int temp2 = 0;
-                    for (int j = 0; j < SIZE_OF_CITY; j++)
-                    {
-                        if (province[i].local_matrix[0][j + 1] == city_id_start)
-                        {
-                            temp1 = j + 1;
-                            break;
-                        }
-                    }
-                    for (int j = 0; j < SIZE_OF_CITY; j++)
-                    {
-                        if (province[i].local_matrix[j + 1][0] == city_id_end)
-                        {
-                            temp2 = j + 1;
-                            break;
-                        }
-                    }
-                    province[i].local_matrix[temp2][temp1] = get<2>(instruction);
-                    province[i].local_matrix[temp1][temp2] = get<2>(instruction);
-                }
-            }
+        if (get<1>(instruction) != get<4>(instruction)) // set bg node cost in foreign matrix
+        {
+            set_cost_foreign_matrix(instruction, foreign_matrix, city_id_start, city_id_end);
         }
-
+        else if (get<1>(instruction) == get<4>(instruction)) // set node cost in local matrix
+        {
+            set_cost_local_matrix(instruction, foreign_matrix, city_id_start, city_id_end);
+        }
         cout << "enter cost of your road --> ";
         getline(cin, line);
     }
-
+    // show_local_matrix();
     for (int i = 0; i < number_province; i++) // send 'i' provinc to next loop
     {
         for (int j = 1; j <= number_city[i]; j++) // داخل این حلقه ماتریس داخلی استان مورد نظر و تعداد شهر ان به همراه سطر جی اُم  ماتریس رو میفرستیم به تابع دایجسترا تا کمترین کاست را درون ارایه دیستینسز بریزد
         {
             int distances[number_city[i]];
-            gps.Dijkstra(province[i].local_matrix, number_city[i], j, distances);
+            gps.Dijkstra_local(province[i].local_matrix, number_city[i], j, distances);
 
             for (int k = 1; k <= number_city[i]; k++) // در این جا هم با ریختن مقادیر درون دیستینسز درون سطر متناظر با ان کاست ها را اپدیت می کنیم
             {
@@ -156,9 +109,8 @@ void Map::createRoad()
             }
         }
     }
-
+    gps.Dijkstra_foreign(foreign_matrix, bg_count);
     show_foreign_matrix(foreign_matrix);
-
     show_local_matrix();
 }
 // ------------------------------------------------------------------------------------------------------
@@ -364,3 +316,58 @@ const void Map::show_local_matrix()
     }
 }
 // ------------------------------------------------------------------------------------------------------
+const void Map::set_cost_foreign_matrix(auto instruction, int **foreign_matrix, int city_id_start, int city_id_end)
+{
+    int temp1 = 0;
+    int temp2 = 0;
+    for (int j = 0; j < bg_count; j++)
+    {
+        if (foreign_matrix[0][j + 1] == city_id_start)
+        {
+            temp1 = j + 1;
+            break;
+        }
+    }
+    for (int j = 0; j < bg_count; j++)
+    {
+        if (foreign_matrix[j + 1][0] == city_id_end)
+        {
+            temp2 = j + 1;
+            break;
+        }
+    }
+
+    foreign_matrix[temp2][temp1] = get<2>(instruction);
+    foreign_matrix[temp1][temp2] = get<2>(instruction);
+}
+// ------------------------------------------------------------------------------------------------------
+const void Map::set_cost_local_matrix(auto instruction, int **foreign_matrix, int city_id_start, int city_id_end)
+{
+    for (size_t i = 0; i < number_province; i++)
+    {
+
+        if (province[i].city[0].province_name == get<1>(instruction))
+        {
+            int temp1 = 0;
+            int temp2 = 0;
+            for (int j = 0; j < SIZE_OF_CITY; j++)
+            {
+                if (province[i].local_matrix[0][j + 1] == city_id_start)
+                {
+                    temp1 = j + 1;
+                    break;
+                }
+            }
+            for (int j = 0; j < SIZE_OF_CITY; j++)
+            {
+                if (province[i].local_matrix[j + 1][0] == city_id_end)
+                {
+                    temp2 = j + 1;
+                    break;
+                }
+            }
+            province[i].local_matrix[temp2][temp1] = get<2>(instruction);
+            province[i].local_matrix[temp1][temp2] = get<2>(instruction);
+        }
+    }
+}

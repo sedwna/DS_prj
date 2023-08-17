@@ -25,5 +25,7 @@ public:
     void set_bg_id_foreign_matrix(int **foreign_matrix,int temp[]);
     void set_node_id_local_matrix(int i_c, int i_p);
     const void show_local_matrix();
+    const void set_cost_foreign_matrix(auto instruction,int **foreign_matrix,int city_id_start,int city_id_end);
+    const void set_cost_local_matrix(auto instruction, int **foreign_matrix, int city_id_start, int city_id_end);
 };
 // ------------------------------------------------------------------------------------------------------

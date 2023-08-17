@@ -15,7 +15,7 @@ void Province::get_local_matrix()
         for (int j = 0; j < SIZE_OF_CITY; j++)
         {
 
-            cout << left << setfill(' ') << setw(3) << local_matrix[i][j];
+            cout << left << setfill(' ') << setw(5) << local_matrix[i][j];
         }
         cout << endl;
     }
