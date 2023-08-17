@@ -1,23 +1,13 @@
 #include "../include/Map.hpp"
 const int INF = numeric_limits<int>::max();
-
+// ------------------------------------------------------------------------------------------------------
 void Map::createMap()
 {
 
     bool greaterThan2 = false;
     bool greaterThan4 = false;
     int bg_count = 0;
-    // set 0 in the local matrix
-    for (size_t i = 0; i < number_province; i++)
-    {
-        for (size_t j = 0; j < SIZE_OF_CITY; j++)
-        {
-            for (size_t k = 0; k < SIZE_OF_CITY; k++)
-            {
-                province[i].set_local_matrix(j, k, 0);
-            }
-        }
-    }
+    create_local_matrix();
 
     while (!greaterThan2)
     {
@@ -57,91 +47,18 @@ void Map::createMap()
             province[i_p].city[i_c].id = get<1>(instruction);
             province[i_p].city[i_c].type = get<2>(instruction);
             province[i_p].city[i_c].province_name = get<3>(instruction);
-            // cout << province[i_p].city[i_c].city_name << endl;
-            // cout << province[i_p].city[i_c].id << endl;
-            // cout << province[i_p].city[i_c].type << endl;
-            // cout << province[i_p].city[i_c].province_name << endl;
 
             if (get<2>(instruction) == "BG")
             {
                 set_bg_count();
             }
-            // set id in local matrix
-            province[i_p].set_local_matrix(0, i_c + 1, province[i_p].city[i_c].id);
-            province[i_p].set_local_matrix(i_c + 1, 0, province[i_p].city[i_c].id);
+            set_node_id_local_matrix(i_c, i_p);
         }
         greaterThan4 = false;
     }
-    for (size_t i = 0; i < number_province; i++)
-    {
-        cout << endl
-             << " show local matrix " << endl;
-
-        province[i].get_local_matrix();
-
-        cout << endl;
-    }
+    show_local_matrix();
 }
-
-tuple<string, int, string, string> Map::parse_CreateMap_instruction(string create)
-{
-
-    string province_name;
-    string city_name;
-    string type;
-    int id;
-    stringstream check1(create);
-    string intermediate;
-
-    // Tokenizing input
-    getline(check1, intermediate, '(');  // delete useless info
-    getline(check1, intermediate, ':');  // get city name
-    city_name = intermediate;            // push city name
-    getline(check1, intermediate, '\''); // delete useless info
-    getline(check1, intermediate, '\''); // get id
-    id = stoi(intermediate);             // push id
-    getline(check1, intermediate, '\''); // delete useless info
-    getline(check1, intermediate, '\''); // get BG or  NBG
-    type = intermediate;                 // //p[ush BG or NBG]
-    getline(check1, intermediate, ' ');  // delete useless info
-    getline(check1, intermediate, ':');  // get province name
-    province_name = intermediate;        // get province name
-    // cout << "complete parse" << endl;
-    return make_tuple(city_name, id, type, province_name);
-}
-
-tuple<string, string, int, string, string> Map::parse_CreateRoad_instruction(string road)
-{
-
-    string start_city;
-    string end_city;
-    string start_province;
-    string end_province;
-    int cost;
-
-    stringstream check1(road);
-    string intermediate;
-
-    // CREATE (A.Qom) – [:ROAD {cost:50}] –> (K.Tabriz)
-
-    // Tokenizing input
-    getline(check1, intermediate, '('); // delete useless info
-    getline(check1, intermediate, '.'); // get start_city name
-    start_city = intermediate;          // push start_city name
-    getline(check1, intermediate, ')'); // get start_province name
-    start_province = intermediate;      // push start_province name
-    getline(check1, intermediate, ':'); // delete useless info
-    getline(check1, intermediate, ':'); // delete useless info
-    getline(check1, intermediate, '}'); // get cost
-    cost = stoi(intermediate);          // push cost
-    getline(check1, intermediate, '('); // delete useless info
-    getline(check1, intermediate, '.'); // get end_city name
-    end_city = intermediate;            // push end_city name
-    getline(check1, intermediate, ')'); // get end_province name
-    end_province = intermediate;        // push end_province name
-    return make_tuple(start_city, start_province, cost, end_city, end_province);
-}
-
+// ------------------------------------------------------------------------------------------------------
 void Map::createRoad()
 {
 
@@ -151,7 +68,6 @@ void Map::createRoad()
     int **foreign_matrix;
 
     foreign_matrix = create_foreign_matrix();
-    // ------------------------------------
 
     cout << "enter cost of your road --> ";
     getline(cin, line);
@@ -220,14 +136,14 @@ void Map::createRoad()
         getline(cin, line);
     }
 
-    for (int i = 0; i < number_province; i++)//توی این قسمت استان آی اُم رو  به حلقه بعد می فرستیم 
+    for (int i = 0; i < number_province; i++) // send 'i' provinc to next loop
     {
-        for (int j = 1; j <= number_city[i]; j++)// داخل این حلقه ماتریس داخلی استان مورد نظر و تعداد شهر ان به همراه سطر جی اُم  ماتریس رو میفرستیم به تابع دایجسترا تا کمترین کاست را درون ارایه دیستینسز بریزد
+        for (int j = 1; j <= number_city[i]; j++) // داخل این حلقه ماتریس داخلی استان مورد نظر و تعداد شهر ان به همراه سطر جی اُم  ماتریس رو میفرستیم به تابع دایجسترا تا کمترین کاست را درون ارایه دیستینسز بریزد
         {
             int distances[number_city[i]];
             gps.Dijkstra(province[i].local_matrix, number_city[i], j, distances);
 
-            for (int k = 1; k <= number_city[i]; k++)// در این جا هم با ریختن مقادیر درون دیستینسز درون سطر متناظر با ان کاست ها را اپدیت می کنیم
+            for (int k = 1; k <= number_city[i]; k++) // در این جا هم با ریختن مقادیر درون دیستینسز درون سطر متناظر با ان کاست ها را اپدیت می کنیم
             {
                 if (distances[k] == INF)
                 {
@@ -242,18 +158,69 @@ void Map::createRoad()
     }
 
     show_foreign_matrix(foreign_matrix);
-    
-    for (size_t i = 0; i < number_province; i++)
-    {
-        cout << endl
-             << " show local matrix " << endl;
 
-        province[i].get_local_matrix();
-
-        cout << endl;
-    }
+    show_local_matrix();
 }
+// ------------------------------------------------------------------------------------------------------
+tuple<string, string, int, string, string> Map::parse_CreateRoad_instruction(string road)
+{
 
+    string start_city;
+    string end_city;
+    string start_province;
+    string end_province;
+    int cost;
+
+    stringstream check1(road);
+    string intermediate;
+
+    // CREATE (A.Qom) – [:ROAD {cost:50}] –> (K.Tabriz)
+
+    // Tokenizing input
+    getline(check1, intermediate, '('); // delete useless info
+    getline(check1, intermediate, '.'); // get start_city name
+    start_city = intermediate;          // push start_city name
+    getline(check1, intermediate, ')'); // get start_province name
+    start_province = intermediate;      // push start_province name
+    getline(check1, intermediate, ':'); // delete useless info
+    getline(check1, intermediate, ':'); // delete useless info
+    getline(check1, intermediate, '}'); // get cost
+    cost = stoi(intermediate);          // push cost
+    getline(check1, intermediate, '('); // delete useless info
+    getline(check1, intermediate, '.'); // get end_city name
+    end_city = intermediate;            // push end_city name
+    getline(check1, intermediate, ')'); // get end_province name
+    end_province = intermediate;        // push end_province name
+    return make_tuple(start_city, start_province, cost, end_city, end_province);
+}
+// ------------------------------------------------------------------------------------------------------
+tuple<string, int, string, string> Map::parse_CreateMap_instruction(string create)
+{
+
+    string province_name;
+    string city_name;
+    string type;
+    int id;
+    stringstream check1(create);
+    string intermediate;
+
+    // Tokenizing input
+    getline(check1, intermediate, '(');  // delete useless info
+    getline(check1, intermediate, ':');  // get city name
+    city_name = intermediate;            // push city name
+    getline(check1, intermediate, '\''); // delete useless info
+    getline(check1, intermediate, '\''); // get id
+    id = stoi(intermediate);             // push id
+    getline(check1, intermediate, '\''); // delete useless info
+    getline(check1, intermediate, '\''); // get BG or  NBG
+    type = intermediate;                 // //p[ush BG or NBG]
+    getline(check1, intermediate, ' ');  // delete useless info
+    getline(check1, intermediate, ':');  // get province name
+    province_name = intermediate;        // get province name
+    // cout << "complete parse" << endl;
+    return make_tuple(city_name, id, type, province_name);
+}
+// ------------------------------------------------------------------------------------------------------
 int Map::found_city_id(string Province_, string City_)
 {
 
@@ -268,14 +235,17 @@ int Map::found_city_id(string Province_, string City_)
         }
     }
 }
+// ------------------------------------------------------------------------------------------------------
 void Map::set_bg_count()
 {
     bg_count++;
 }
+// ------------------------------------------------------------------------------------------------------
 int Map::get_bg_count()
 {
     return bg_count;
 }
+// ------------------------------------------------------------------------------------------------------
 int **Map::create_foreign_matrix()
 {
 
@@ -325,24 +295,14 @@ int **Map::create_foreign_matrix()
         }
     }
 
-    // cout << "id bg" << endl;
-    // for (size_t i = 0; i < bg_count; i++)
-    // {
-    //     cout << temp[i] << " ";
-    // }
-
     cout << endl;
-    // set id bg city in matrix
-    for (int j = 0; j < bg_count; j++)
-    {
-        foreign_matrix[0][j + 1] = temp[j];
-        foreign_matrix[j + 1][0] = temp[j];
-    }
+    set_bg_id_foreign_matrix(foreign_matrix, temp);
 
     show_foreign_matrix(foreign_matrix);
 
     return foreign_matrix;
 }
+// ------------------------------------------------------------------------------------------------------
 const void Map::show_foreign_matrix(int **foreign_matrix)
 {
     cout << endl
@@ -352,8 +312,55 @@ const void Map::show_foreign_matrix(int **foreign_matrix)
     {
         for (int j = 0; j < bg_count + 1; ++j)
         {
-            cout << foreign_matrix[i][j] << " ";
+            cout << left << setfill(' ') << setw(3) << foreign_matrix[i][j];
         }
         cout << endl;
     }
 }
+// ------------------------------------------------------------------------------------------------------
+void Map::create_local_matrix() // set 0 in the local matrix
+{
+
+    for (size_t i = 0; i < number_province; i++)
+    {
+        for (size_t j = 0; j < SIZE_OF_CITY; j++)
+        {
+            for (size_t k = 0; k < SIZE_OF_CITY; k++)
+            {
+                province[i].set_local_matrix(j, k, 0);
+            }
+        }
+    }
+}
+// ------------------------------------------------------------------------------------------------------
+void Map::set_bg_id_foreign_matrix(int **foreign_matrix, int temp[]) // set id bg city in matrix
+{
+
+    for (int j = 0; j < bg_count; j++)
+    {
+        foreign_matrix[0][j + 1] = temp[j];
+        foreign_matrix[j + 1][0] = temp[j];
+    }
+}
+// ------------------------------------------------------------------------------------------------------
+void Map::set_node_id_local_matrix(int i_c, int i_p) // set id in local matrix
+{
+
+    province[i_p].set_local_matrix(0, i_c + 1, province[i_p].city[i_c].id);
+    province[i_p].set_local_matrix(i_c + 1, 0, province[i_p].city[i_c].id);
+}
+// ------------------------------------------------------------------------------------------------------
+const void Map::show_local_matrix()
+{
+    for (size_t i = 0; i < number_province; i++)
+    {
+        cout << endl
+             << " show local matrix "
+             << endl;
+
+        province[i].get_local_matrix();
+
+        cout << endl;
+    }
+}
+// ------------------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 #include "Province.hpp"
 #include "GPS.hpp"
-
+// ------------------------------------------------------------------------------------------------------
 class Map
 {
 private:
@@ -21,4 +21,9 @@ public:
     void set_bg_count();
     int get_bg_count();
     const void show_foreign_matrix(int **foreign_matrix);
+    void create_local_matrix();
+    void set_bg_id_foreign_matrix(int **foreign_matrix,int temp[]);
+    void set_node_id_local_matrix(int i_c, int i_p);
+    const void show_local_matrix();
 };
+// ------------------------------------------------------------------------------------------------------

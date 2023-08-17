@@ -1,5 +1,5 @@
 #include "../include/GPS.hpp"
-
+// ------------------------------------------------------------------------------------------------------
 void GPS::Dijkstra(int adjacencyMatrix[SIZE_OF_CITY][SIZE_OF_CITY], int number_city, int start, int distances[])
 {
     bool visited[number_city];
@@ -32,3 +32,4 @@ void GPS::Dijkstra(int adjacencyMatrix[SIZE_OF_CITY][SIZE_OF_CITY], int number_c
         }
     }
 }
+// ------------------------------------------------------------------------------------------------------
