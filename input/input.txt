@@ -24,11 +24,11 @@ CREATE (O: Node, {id: '15', Type: 'NON_BG'}, Tabriz: province)
 
 
 // -----------------------------------------------foreign------------------------------------------------
-CREATE (B.Qom) – [:ROAD {cost:77}] –> (N.Tabriz)
+CREATE (B.Qom) – [:ROAD {cost:7}] –> (N.Tabriz)
 CREATE (E.Qom) – [:ROAD {cost:10}] –> (N.Tabriz) 
-CREATE (B.Qom) – [:ROAD {cost:60}] –> (J.Yazd)
+CREATE (B.Qom) – [:ROAD {cost:6}] –> (J.Yazd)
 CREATE (E.Qom) – [:ROAD {cost:12}] –> (H.Yazd)
-CREATE (H.Yazd) – [:ROAD {cost:35}] –> (N.Tabriz) 
+CREATE (H.Yazd) – [:ROAD {cost:5}] –> (N.Tabriz) 
 // ------------------------------------------------local-------------------------------------------------
 CREATE (E.Qom) – [:ROAD {cost:50}] –> (A.Qom) 
 CREATE (E.Qom) – [:ROAD {cost:80}] –> (B.Qom) 

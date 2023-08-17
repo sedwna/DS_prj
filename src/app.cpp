@@ -2,10 +2,17 @@
 // ------------------------------------------------------------------------------------------------------
 App::App()
 {
-    
+    int **foreign_matrix;
+
     // splashScreen();
     myMap.createMap();
-    myMap.createRoad();
+    foreign_matrix = myMap.createRoad();
+    myMap.set_min_cost_local_matrix();
+    myMap.set_min_cost_foreign_matrix(foreign_matrix);
+
+
+    myMap.show_foreign_matrix(foreign_matrix);
+    myMap.show_local_matrix();
 }
 // ------------------------------------------------------------------------------------------------------
 void App::splashScreen() const

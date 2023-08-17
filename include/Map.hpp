@@ -16,7 +16,7 @@ public:
 
     int found_city_id(string Province_, string City_);
     void createMap();
-    void createRoad();
+    int** createRoad();
     int **create_foreign_matrix();
     void set_bg_count();
     int get_bg_count();
@@ -27,5 +27,7 @@ public:
     const void show_local_matrix();
     const void set_cost_foreign_matrix(auto instruction,int **foreign_matrix,int city_id_start,int city_id_end);
     const void set_cost_local_matrix(auto instruction, int **foreign_matrix, int city_id_start, int city_id_end);
+    const void set_min_cost_local_matrix();
+    const void set_min_cost_foreign_matrix(int **foreign_matrix);
 };
 // ------------------------------------------------------------------------------------------------------

@@ -58,7 +58,7 @@ void Map::createMap()
     }
 }
 // ------------------------------------------------------------------------------------------------------
-void Map::createRoad()
+int** Map::createRoad()
 {
 
     string line;
@@ -89,29 +89,8 @@ void Map::createRoad()
         getline(cin, line);
     }
     // show_local_matrix();
-    for (int i = 0; i < number_province; i++) // send 'i' provinc to next loop
-    {
-        for (int j = 1; j <= number_city[i]; j++) // داخل این حلقه ماتریس داخلی استان مورد نظر و تعداد شهر ان به همراه سطر جی اُم  ماتریس رو میفرستیم به تابع دایجسترا تا کمترین کاست را درون ارایه دیستینسز بریزد
-        {
-            int distances[number_city[i]];
-            gps.Dijkstra_local(province[i].local_matrix, number_city[i], j, distances);
-
-            for (int k = 1; k <= number_city[i]; k++) // در این جا هم با ریختن مقادیر درون دیستینسز درون سطر متناظر با ان کاست ها را اپدیت می کنیم
-            {
-                if (distances[k] == INF)
-                {
-                    province[i].local_matrix[j][k] = 0;
-                }
-                else
-                {
-                    province[i].local_matrix[j][k] = distances[k];
-                }
-            }
-        }
-    }
-    gps.Dijkstra_foreign(foreign_matrix, bg_count);
-    show_foreign_matrix(foreign_matrix);
-    show_local_matrix();
+    return foreign_matrix;
+    
 }
 // ------------------------------------------------------------------------------------------------------
 tuple<string, string, int, string, string> Map::parse_CreateRoad_instruction(string road)
@@ -210,7 +189,7 @@ int **Map::create_foreign_matrix()
             foreign_matrix[i][j] = 0;
         }
     }
-    // show_foreign_matrix(foreign_matrix);
+    
 
     int temp[bg_count];
 
@@ -218,12 +197,7 @@ int **Map::create_foreign_matrix()
     {
         temp[i] = -1;
     }
-    // cout << "bg count :" << bg_count << endl;
-    // cout << "number_province " << number_province << endl;
-    // cout << "number_city 0, " << number_city[0] << endl;
-    // cout << "number_city 1, " << number_city[1] << endl;
-    // cout << "number_city 2, " << number_city[2] << endl;
-    // cout << "number_city 3, " << number_city[3] << endl;
+    
 
     for (int i = 0; i < number_province; i++)
     {
@@ -246,12 +220,7 @@ int **Map::create_foreign_matrix()
             }
         }
     }
-
-    cout << endl;
     set_bg_id_foreign_matrix(foreign_matrix, temp);
-
-    show_foreign_matrix(foreign_matrix);
-
     return foreign_matrix;
 }
 // ------------------------------------------------------------------------------------------------------
@@ -264,7 +233,7 @@ const void Map::show_foreign_matrix(int **foreign_matrix)
     {
         for (int j = 0; j < bg_count + 1; ++j)
         {
-            cout << left << setfill(' ') << setw(3) << foreign_matrix[i][j];
+            cout << left << setfill(' ') << setw(5) << foreign_matrix[i][j];
         }
         cout << endl;
     }
@@ -371,3 +340,50 @@ const void Map::set_cost_local_matrix(auto instruction, int **foreign_matrix, in
         }
     }
 }
+// ------------------------------------------------------------------------------------------------------
+const void Map::set_min_cost_local_matrix()
+{
+    for (int i = 0; i < number_province; i++) // send 'i' provinc to next loop
+    {
+        for (int j = 1; j <= number_city[i]; j++) // داخل این حلقه ماتریس داخلی استان مورد نظر و تعداد شهر ان به همراه سطر جی اُم  ماتریس رو میفرستیم به تابع دایجسترا تا کمترین کاست را درون ارایه دیستینسز بریزد
+        {
+            int distances[number_city[i]];
+            gps.Dijkstra_local(province[i].local_matrix, number_city[i], j, distances);
+
+            for (int k = 1; k <= number_city[i]; k++) // در این جا هم با ریختن مقادیر درون دیستینسز درون سطر متناظر با ان کاست ها را اپدیت می کنیم
+            {
+                if (distances[k] == INF)
+                {
+                    province[i].local_matrix[j][k] = 0;
+                }
+                else
+                {
+                    province[i].local_matrix[j][k] = distances[k];
+                }
+            }
+        }
+    }
+}
+// ------------------------------------------------------------------------------------------------------
+const void Map::set_min_cost_foreign_matrix(int **foreign_matrix)
+{
+
+    for (int j = 1; j <= bg_count; j++) 
+    {
+        int distances[bg_count];
+        gps.Dijkstra_foreign(foreign_matrix, bg_count,j,distances);
+
+        for (int k = 1; k <= bg_count; k++) 
+        {
+            if (distances[k] == INF)
+            {
+                foreign_matrix[j][k] = 0;
+            }
+            else
+            {
+                foreign_matrix[j][k] = distances[k];
+            }
+        }
+    }
+}
+// ------------------------------------------------------------------------------------------------------
