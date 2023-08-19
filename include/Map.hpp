@@ -1,5 +1,6 @@
 #include "Province.hpp"
 #include "GPS.hpp"
+#include "Queue.hpp"
 // ------------------------------------------------------------------------------------------------------
 class Map
 {
@@ -9,11 +10,14 @@ private:
     int bg_count = 0;
 
 public:
-    GPS gps;// شی از GPS
+    GPS gps;
+    Queue queue;
     Province province[SIZE_OF_PROVINCE];
     tuple<string, int, string, string> parse_CreateMap_instruction(string creat);
     tuple<string, string, int, string, string> parse_CreateRoad_instruction(string creat);
+    tuple<string, string, string, string> parse_find_local(string command);
 
+    void find_route_taken(int **foreign_matrix);
     int found_city_id(string Province_, string City_);
     void createMap();
     int** createRoad();

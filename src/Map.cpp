@@ -58,7 +58,7 @@ void Map::createMap()
     }
 }
 // ------------------------------------------------------------------------------------------------------
-int** Map::createRoad()
+int **Map::createRoad()
 {
 
     string line;
@@ -90,7 +90,6 @@ int** Map::createRoad()
     }
     // show_local_matrix();
     return foreign_matrix;
-    
 }
 // ------------------------------------------------------------------------------------------------------
 tuple<string, string, int, string, string> Map::parse_CreateRoad_instruction(string road)
@@ -125,6 +124,163 @@ tuple<string, string, int, string, string> Map::parse_CreateRoad_instruction(str
     return make_tuple(start_city, start_province, cost, end_city, end_province);
 }
 // ------------------------------------------------------------------------------------------------------
+void Map::find_route_taken(int **foreign_matrix)
+{
+    cout << "Enter the find path command --> ";
+    string line;
+    getline(cin, line);
+
+    auto instruction = parse_find_local(line);
+
+    int start_id = found_city_id(get<0>(instruction), get<1>(instruction));
+    int end_id = found_city_id(get<2>(instruction), get<3>(instruction));
+
+    if (get<0>(instruction) == get<2>(instruction))
+    {
+        for (size_t i = 0; i < number_province; i++)
+        {
+            if (province[i].city[0].province_name == get<0>(instruction))
+            {
+                int k = 0;
+                int sum = 0;
+                while (province[i].city[k].id == end_id && province[i].local_matrix[start_id][end_id] == sum)
+                {
+                    for (size_t j = 0; j < number_city[i]; j++)
+                    {
+                        if (province[i].city[j].id == start_id)
+                        {
+                            for (k = 0; k < number_city[i]; k++)
+                            {
+                                if (province[i].copy_of_local_matrix[j][k] != 0)
+                                {
+                                    queue.enqueue(province[i].city[k].id);
+                                    sum += province[i].copy_of_local_matrix[j][k];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    else
+    {
+        int total_cost = 0;
+        int temp1;
+        int temp2;
+        int bg_node_start;
+        int bg_node_end;
+
+        for (size_t k = 0; k < number_province; k++)
+        {
+            if (province[k].city[0].province_name == get<0>(instruction))
+            {
+                for (size_t j = 1; j < number_city[k] + 1; j++)
+                {
+                    for (size_t i = 1; i < bg_count + 1; i++)
+                    {
+                        if (foreign_matrix[i][0] == province[k].city[j].id)
+                        {
+                            temp1 = i;
+                            bg_node_start = province[k].city[j].id;
+                        }
+                    }
+                }
+            }
+
+            else if (province[k].city[0].province_name == get<2>(instruction))
+            {
+                for (size_t j = 1; j < number_city[k] + 1; j++)
+                {
+                    for (size_t i = 1; i < bg_count + 1; i++)
+                    {
+                        if (foreign_matrix[0][i] == province[k].city[j].id)
+                        {
+                            temp2 = i;
+                            bg_node_end = province[k].city[j].id;
+                        }
+                    }
+                }
+            }
+        }
+
+        total_cost += foreign_matrix[temp1][temp2];
+
+        for (size_t i = 0; i < number_province; i++)
+        {
+            if (province[i].city[0].province_name == get<0>(instruction))
+            {
+                for (size_t j = 1; j < number_city[i] + 1; j++)
+                {
+                    if (province[i].local_matrix[j][0] == bg_node_start)
+                    {
+                        for (size_t k = 1; k < number_city[i] + 1; k++)
+                        {
+                            if (province[i].local_matrix[0][k] == start_id)
+                            {
+                                total_cost += province[i].local_matrix[j][k];
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (size_t i = 0; i < number_province; i++)
+        {
+            if (province[i].city[0].province_name == get<2>(instruction))
+            {
+                for (size_t j = 1; j < number_city[i] + 1; j++)
+                {
+                    if (province[i].local_matrix[j][0] == bg_node_end)
+                    {
+                        for (size_t k = 1; k < number_city[i] + 1; k++)
+                        {
+                            if (province[i].local_matrix[0][k] == end_id)
+                            {
+                                total_cost += province[i].local_matrix[j][k];
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        cout << "Total Cost from " << get<0>(instruction) << "." << get<1>(instruction) << " to "
+             << get<2>(instruction) << "." << get<3>(instruction) << " is : " << total_cost;
+    }
+}
+
+// ------------------------------------------------------------------------------------------------------
+tuple<string, string, string, string> Map::parse_find_local(string command)
+{
+    string start_city;
+    string end_city;
+    string start_province;
+    string end_province;
+
+    stringstream check1(command);
+    string intermediate;
+
+    // FIND AS4.W->AS1.F
+    // Tokenizing find
+    getline(check1, intermediate, ' ');  // delete useless info
+    getline(check1, intermediate, '.');  // get start_province name
+    start_province = intermediate;       // push start_province name
+    getline(check1, intermediate, '-');  // get start_city name
+    start_city = intermediate;           // push start_city name
+    getline(check1, intermediate, '>');  // delete useless info
+    getline(check1, intermediate, '.');  // get end_province name
+    end_province = intermediate;         // push end_province name
+    getline(check1, intermediate, '\0'); // get end_city name
+    end_city = intermediate;             // push end_province name
+
+    return make_tuple(start_province, start_city, end_province, end_city);
+}
+
 tuple<string, int, string, string> Map::parse_CreateMap_instruction(string create)
 {
 
@@ -189,7 +345,6 @@ int **Map::create_foreign_matrix()
             foreign_matrix[i][j] = 0;
         }
     }
-    
 
     int temp[bg_count];
 
@@ -197,7 +352,6 @@ int **Map::create_foreign_matrix()
     {
         temp[i] = -1;
     }
-    
 
     for (int i = 0; i < number_province; i++)
     {
@@ -337,6 +491,7 @@ const void Map::set_cost_local_matrix(auto instruction, int **foreign_matrix, in
             }
             province[i].local_matrix[temp2][temp1] = get<2>(instruction);
             province[i].local_matrix[temp1][temp2] = get<2>(instruction);
+            province[i].copy_of_local_matrix[temp2][temp1] = get<2>(instruction);
         }
     }
 }
@@ -368,12 +523,12 @@ const void Map::set_min_cost_local_matrix()
 const void Map::set_min_cost_foreign_matrix(int **foreign_matrix)
 {
 
-    for (int j = 1; j <= bg_count; j++) 
+    for (int j = 1; j <= bg_count; j++)
     {
         int distances[bg_count];
-        gps.Dijkstra_foreign(foreign_matrix, bg_count,j,distances);
+        gps.Dijkstra_foreign(foreign_matrix, bg_count, j, distances);
 
-        for (int k = 1; k <= bg_count; k++) 
+        for (int k = 1; k <= bg_count; k++)
         {
             if (distances[k] == INF)
             {

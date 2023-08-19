@@ -5,6 +5,7 @@ void Province::set_local_matrix(int i, int j, int value)
 {
 
     local_matrix[i][j] = value;
+    copy_of_local_matrix[i][j] = value;
 }
 // ------------------------------------------------------------------------------------------------------
 void Province::get_local_matrix()

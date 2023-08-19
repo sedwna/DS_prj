@@ -41,3 +41,5 @@ CREATE (B.Qom) – [:ROAD {cost:70}] –> (D.Qom)
 CREATE (B.Qom) – [:ROAD {cost:100}] –> (C.Qom) 
 CREATE (C.Qom) – [:ROAD {cost:85}] –> (D.Qom) 
 // ------------------------------------------------------------------------------------------------------
+
+FIND Qom.C->Tabriz.N
