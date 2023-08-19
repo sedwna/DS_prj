@@ -39,11 +39,30 @@ void Map::createMap()
 
         for (int i_c = 0; i_c < number_city[i_p]; i_c++)
         {
+            bool check = true;
             string line;
+            string city_name;
             getline(cin, line);
 
             auto instruction = parse_CreateMap_instruction(line);
-            province[i_p].city[i_c].city_name = get<0>(instruction);
+            city_name = get<0>(instruction);
+
+            while (check)
+            {
+                for (int j = 0; j < number_city[i_p]; j++)
+                {
+                    if (city_name == province[i_p].city[j].city_name)
+                    {
+                        cout << "this name has already been selected." << endl;
+                        cout << "choose another name ---> ";
+                        cin >> city_name;
+                        j = -1;
+                    }
+                }
+                check = false;
+            }
+
+            province[i_p].city[i_c].city_name = city_name;
             province[i_p].city[i_c].id = get<1>(instruction);
             province[i_p].city[i_c].type = get<2>(instruction);
             province[i_p].city[i_c].province_name = get<3>(instruction);
